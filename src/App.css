@@ -1,0 +1,87 @@
+
+
+.Body{
+  background-color: #dadada;
+  width: 70vw;
+  min-height: 80vh;
+  position: absolute;
+  right: 15vw;
+  top: 10vh;
+  padding:10px;
+  border-radius: 10px;
+  box-shadow: 3px 3px 0px black;
+}
+
+.chatbox{
+  border: 1px solid rgba(0, 0, 0, 0.53);
+  border-radius: 5px;
+  padding: 10px;
+  background: rgb(23, 154, 0);
+  height: 20px;
+}
+.container{
+  margin: 0;
+  padding: 0;
+}
+.container{
+  display: flex;
+  margin-left: 10px;
+  row-gap: 0px;
+  /* background-color: rgba(255, 0, 0, 0.318); */
+}
+
+.chat-container {
+  overflow-y: scroll;
+  height: 50vh;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  -ms-scroll-chaining: none;
+  overscroll-behavior: contain;
+  -ms-scroll-snap-type: y proximity;
+  scroll-snap-type: y proximity;
+  /* border: 2px solid black; */
+}
+
+.chat-container::-webkit-scrollbar{
+  width: 15px;
+}
+
+#snap {
+  scroll-snap-align: end;
+}
+
+
+.me .chatbox{
+  background-color: rgba(255, 255, 0, 0.819);
+}
+
+.me{
+  display: flex;
+  flex-direction: row-reverse;
+
+}
+
+.inputArea{
+  position: absolute;
+  width: 100%;
+  bottom: 10px;
+  display: flex;
+  overflow: hidden;
+}
+
+.inputArea input{
+  flex-grow: 1;
+  border: none;
+  border-radius: 5px;
+  padding: 4px;
+  padding-left: 13px;
+}
+
+.inputArea button{
+  margin-right: 15px;
+  margin-left: 15px;
+  border: none;
+  border-radius: 30px;
+  background: grey;
+  padding: 10px;
+}
