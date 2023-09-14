@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import { getDatabase , onChildAdded, push, ref, set} from "firebase/database";
 
+import { GoogleAuthProvider } from "firebase/auth";
+import { getAuth, signInWithPopup} from "firebase/auth";
+
+
 
 
 function App() {
@@ -10,6 +14,33 @@ function App() {
   const [chat,setchat]=useState([])
   const db= getDatabase();
   const chatListRef = ref(db, 'chats');
+  const provider=new GoogleAuthProvider();
+  const auth = getAuth();
+
+  const googleLogin=()=>{
+    
+    signInWithPopup(auth, provider)
+    .then((result) => {
+    // This gives you a Google Access Token. You can use it to access the Google API.
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const token = credential.accessToken;
+    // The signed-in user info.
+    const user = result.user;
+    // IdP data available using getAdditionalUserInfo(result)
+    setName(result.user.displayName);
+    // console.log(result,token);
+    // ...
+  }).catch((error) => {
+    // Handle Errors here.
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    // The email of the user's account used.
+    const email = error.customData.email;
+    // The AuthCredential type that was used.
+    const credential = GoogleAuthProvider.credentialFromError(error);
+    // ...
+  });
+  }
 
   useEffect(()=>{
     onChildAdded(chatListRef,(data)=>{
@@ -32,7 +63,8 @@ function App() {
   return (
    <div className='Body'>
     <div>
-      {name?null:<input type='text' placeholder="Enter your name " onBlur={e=>setName(e.target.value)}></input>}</div>
+      <button onClick={e=>{googleLogin()}}>GoogleSignIN</button>
+    </div>
     <h3>User : {name}</h3>
     <div className='chat-container'>
       {
