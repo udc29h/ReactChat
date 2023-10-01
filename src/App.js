@@ -7,11 +7,11 @@ import { getAuth, signInWithPopup} from "firebase/auth";
 
 
 
-
 function App() {
   const [name,setName]=useState("");
   const [msg,setmsg]=useState('');
   const [chat,setchat]=useState([])
+  const [isSignedIn, setIsSignedIn]=useState(false);
   const db= getDatabase();
   const chatListRef = ref(db, 'chats');
   const provider=new GoogleAuthProvider();
@@ -26,6 +26,7 @@ function App() {
     const token = credential.accessToken;
     // The signed-in user info.
     const user = result.user;
+    setIsSignedIn(true);
     // IdP data available using getAdditionalUserInfo(result)
     setName(result.user.displayName);
     // console.log(result,token);
@@ -62,29 +63,38 @@ function App() {
   }
   return (
    <div className='Body'>
-    <div>
-      <button onClick={e=>{googleLogin()}}>GoogleSignIN</button>
-    </div>
-    <h3>User : {name}</h3>
-    <div className='chat-container'>
-      {
-        chat.map(c=><div className={`container${c.name===name?' me':""}`}>
-        <p className='chatbox'>
-          <strong>{c.name} : </strong>
-          <span>{c.message}</span>
-        </p>
-      </div>)
-      
-      }
-      <div id='snap'></div>
-      <div className='inputArea'>
-        <input type='text' placeholder='Enter your message !'
-
-        onInput={e=>setmsg(e.target.value)} value={msg}
-          
-        ></input> <button onClick={e=>sendChat()}>Send</button>
+      {!isSignedIn ? (
+        <div>
+          <p>Hey, sign in with Google to chat</p>
+          <button onClick={googleLogin}>Google Sign In</button>
+        </div>
+      ) : (
+        // Your chat application code here
+      <>
+      <h3>User : {name}</h3>
+      <div className='chat-container'>
+        {
+          chat.map(c=><div className={`container${c.name===name?' me':""}`}>
+          <p className='chatbox'>
+            <strong>{c.name} : </strong>
+            <span>{c.message}</span>
+          </p>
+        </div>)
+        
+        }
+        <div id='snap'></div>
+        <div className='inputArea'>
+          <input type='text' placeholder='Enter your message !'
+  
+          onInput={e=>setmsg(e.target.value)} value={msg}
+          onKeyDown={e=>{if(e.key==='Enter'){
+            sendChat();
+          }}}
+          ></input> <button onClick={e=>sendChat()}>Send</button>
+        </div>
       </div>
-    </div>
+      </>
+      )}        
    </div>
   );
 }
