@@ -2,30 +2,27 @@ import { useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 function Obox() {
+  const auth = getAuth();
   const [usernames, setUsernames] = useState([]);
+  const [uid, setUid] = useState(null); // Declare and initialize the uid variable
 
   useEffect(() => {
-    const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // User is signed in
-        const uid = user.uid;
-        // Update the usernames state with the current user's display name and online status
+        setUid(user.uid); // Assign the uid value from the authenticated user
         setUsernames((prevUsernames) => {
-          const updatedUsernames = prevUsernames.filter((name) => name.uid !== uid);
-          return [...updatedUsernames, { uid, displayName: user.displayName, online: true }];
+          const updatedUsernames = prevUsernames.filter((name) => name.uid !== user.uid);
+          return [...updatedUsernames, { uid: user.uid, displayName: user.displayName, online: true }];
         });
       } else {
-        // User is signed out
-        // Remove the current user's display name from the usernames state
+        setUid(null); // Reset the uid value if the user is not authenticated
         setUsernames((prevUsernames) =>
           prevUsernames.filter((name) => name.uid !== uid)
         );
       }
     });
 
-    // Clean up the observer when the component unmounts
-    return () => unsubscribe();
+    return () => unsubscribe(); // Clean up the observer when the component unmounts
   }, []);
 
   return (
