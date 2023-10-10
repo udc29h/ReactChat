@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import './App.css';
+import './Onlinebox.css';
 import { getDatabase , onChildAdded, push, ref, set} from "firebase/database";
 
 import { GoogleAuthProvider } from "firebase/auth";
 import { getAuth, signInWithPopup} from "firebase/auth";
-
+import { setPersistence, browserSessionPersistence } from "firebase/auth";
+import Obox from './Onlinebox';
 
 
 function App() {
@@ -16,10 +18,12 @@ function App() {
   const chatListRef = ref(db, 'chats');
   const provider=new GoogleAuthProvider();
   const auth = getAuth();
+  setPersistence(auth, browserSessionPersistence);
 
   const googleLogin=()=>{
     
     signInWithPopup(auth, provider)
+    
     .then((result) => {
     // This gives you a Google Access Token. You can use it to access the Google API.
     const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -70,13 +74,15 @@ function App() {
         </div>
       ) : (
         // Your chat application code here
-      <>
+      <div className='master-container'>
+      <Obox></Obox>
+      <div className='chat-area'>
       <h3>User : {name}</h3>
       <div className='chat-container'>
         {
           chat.map(c=><div className={`container${c.name===name?' me':""}`}>
           <p className='chatbox'>
-            <strong>{c.name} : </strong>
+            <strong>{c.name} : </strong><br/>
             <span>{c.message}</span>
           </p>
         </div>)
@@ -93,7 +99,8 @@ function App() {
           ></input> <button onClick={e=>sendChat()}>Send</button>
         </div>
       </div>
-      </>
+      </div>
+      </div>
       )}        
    </div>
   );
