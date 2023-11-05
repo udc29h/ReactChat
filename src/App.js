@@ -1,108 +1,123 @@
 import { useEffect, useState } from 'react';
+import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { getDatabase, onChildAdded, push, ref, set } from 'firebase/database';
+import { initializeApp } from 'firebase/app';
 import './App.css';
 import './Onlinebox.css';
-import { getDatabase , onChildAdded, push, ref, set} from "firebase/database";
-
-import { GoogleAuthProvider } from "firebase/auth";
-import { getAuth, signInWithPopup} from "firebase/auth";
-import { setPersistence, browserSessionPersistence } from "firebase/auth";
 import Obox from './Onlinebox';
 
+const firebaseConfig = {
+  apiKey: "AIzaSyAsJpBoqKKL7Y0WbRTe1rP5o6Y9UUvZTDg",
+  authDomain: "react-chat-app-506ff.firebaseapp.com",
+  databaseURL: "https://react-chat-app-506ff-default-rtdb.firebaseio.com",
+  projectId: "react-chat-app-506ff",
+  storageBucket: "react-chat-app-506ff.appspot.com",
+  messagingSenderId: "349179677600",
+  appId: "1:349179677600:web:94a0f827990e9804f2f2c5",
+  measurementId: "G-M1GX7MGR36"
+};
+initializeApp(firebaseConfig);
 
 function App() {
-  const [name,setName]=useState("");
-  const [msg,setmsg]=useState('');
-  const [chat,setchat]=useState([])
-  const [isSignedIn, setIsSignedIn]=useState(false);
-  const db= getDatabase();
-  const chatListRef = ref(db, 'chats');
-  const provider=new GoogleAuthProvider();
+  const [name, setName] = useState('');
+  const [msg, setMsg] = useState('');
+  const [chat, setChat] = useState([]);
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState([]);
   const auth = getAuth();
-  setPersistence(auth, browserSessionPersistence);
+  const provider = new GoogleAuthProvider();
+  const db = getDatabase();
+  const chatListRef = ref(db, 'chats');
 
-  const googleLogin=()=>{
-    
+  const googleLogin = () => {
     signInWithPopup(auth, provider)
-    
-    .then((result) => {
-    // This gives you a Google Access Token. You can use it to access the Google API.
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    const token = credential.accessToken;
-    // The signed-in user info.
-    const user = result.user;
-    setIsSignedIn(true);
-    // IdP data available using getAdditionalUserInfo(result)
-    setName(result.user.displayName);
-    // console.log(result,token);
-    // ...
-  }).catch((error) => {
-    // Handle Errors here.
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    // The email of the user's account used.
-    const email = error.customData.email;
-    // The AuthCredential type that was used.
-    const credential = GoogleAuthProvider.credentialFromError(error);
-    // ...
-  });
-  }
-
-  useEffect(()=>{
-    onChildAdded(chatListRef,(data)=>{
-        setchat(chat=>[...chat,data.val()])
+      .then((result) => {
+        const user = result.user;
+        setIsSignedIn(true);
+        setName(user.displayName);
+        setOnlineUsers((users) => [...users, user.displayName]);
+      })
+      .catch((error) => {
+        // Handle errors
       });
-    
-  },[])
-  const sendChat=()=>{
+  };
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsSignedIn(!!user);
+      if (user) {
+        setName(user.displayName);
+        setOnlineUsers((users) => [...users, user.displayName]);
+      } else {
+        setOnlineUsers((users) => users.filter((u) => u !== name));
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [auth, name]);
+
+  useEffect(() => {
+    onChildAdded(chatListRef, (data) => {
+      setChat((chat) => [...chat, data.val()]);
+    });
+  }, []);
+
+  const sendChat = () => {
     const chatRef = push(chatListRef);
 
     set(chatRef, {
-      name, message:msg
+      name,
+      message: msg,
     });
-    // const c=[...chat];
-    // c.push({name:name,message:msg});
-    // setchat(c);
-    setmsg(''); 
-  }
+
+    setMsg('');
+  };
+
   return (
-   <div className='Body'>
+    <div className='Body'>
       {!isSignedIn ? (
         <div>
           <p>Hey, sign in with Google to chat</p>
           <button onClick={googleLogin}>Google Sign In</button>
         </div>
       ) : (
-        // Your chat application code here
-      <div className='master-container'>
-      <Obox></Obox>
-      <div className='chat-area'>
-      <h3>User : {name}</h3>
-      <div className='chat-container'>
-        {
-          chat.map(c=><div className={`container${c.name===name?' me':""}`}>
-          <p className='chatbox'>
-            <strong>{c.name} : </strong><br/>
-            <span>{c.message}</span>
-          </p>
-        </div>)
-        
-        }
-        <div id='snap'></div>
-        <div className='inputArea'>
-          <input type='text' placeholder='Enter your message !'
-  
-          onInput={e=>setmsg(e.target.value)} value={msg}
-          onKeyDown={e=>{if(e.key==='Enter'){
-            sendChat();
-          }}}
-          ></input> <button onClick={e=>sendChat()}>Send</button>
+        <div className='master-container'>
+          <Obox onlineUsers={onlineUsers} />
+          <div className='chat-area'>
+            <h3>User: {name}</h3>
+            <div className='chat-container'>
+              {chat.map((c) => (
+                <div className={`container${c.name === name ? ' me' : ''}`}>
+                  <p className='chatbox'>
+                    <strong>{c.name}:</strong>
+                    <br />
+                    <span>{c.message}</span>
+                  </p>
+                </div>
+              ))}
+              <div id='snap'></div>
+              <div className='inputArea'>
+                <input
+                  type='text'
+                  placeholder='Enter your message!'
+                  onInput={(e) => setMsg(e.target.value)}
+                  value={msg}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      sendChat();
+                    }
+                  }}
+                />
+                <button onClick={(e) => sendChat()}>Send</button>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-      </div>
-      </div>
-      )}        
-   </div>
+      )}
+    </div>
   );
 }
+
 export default App;

@@ -112,3 +112,27 @@
   display: flex;
 
 }
+
+@media (max-width: 425px) {
+  .Body {
+    width: 100%;
+    right: 0;
+    top: 0;
+    padding: 0;
+  }
+
+  .chatbox {
+    max-width: 100%;
+
+  }
+
+  .inputArea {
+    width: 100%;
+    bottom: 0;
+    position: fixed;
+  }
+
+  .online-area {
+    display: none !important; /* Hide the online-area class in mobile */
+  }
+}
