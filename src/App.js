@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState,useRef } from 'react';
 import { signOut,getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { getDatabase, onChildAdded, push, ref, set } from 'firebase/database';
 import { initializeApp } from 'firebase/app';
 import './App.css';
 import './Onlinebox.css';
+import randomGuyPic from './img/random.webp'
 import Obox from './Onlinebox';
 import { Timestamp } from 'firebase/firestore';
 
@@ -20,6 +21,7 @@ const firebaseConfig = {
 initializeApp(firebaseConfig);
 
 function App() {
+  const [profilePic, setProfilePic] = useState('');
   const [name, setName] = useState('');
   const [msg, setMsg] = useState('');
   const [chat, setChat] = useState([]);
@@ -35,12 +37,15 @@ function App() {
   const addUserOnline=(user)=>{
     setOnlineUsers(prevUsers=>[...prevUsers,user.name]);
   }
+  const chatContainerRef=useRef(null);
   const googleLogin = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
         const user = result.user;
         setIsSignedIn(true);
         setName(user.displayName);
+        console.log(user.photoURL)
+        setProfilePic(user.photoURL)
         // setOnlineUsers((users) => [...users, user.displayName]);
       })
       .catch((error) => {
@@ -95,6 +100,7 @@ function App() {
     const chatRef = push(chatListRef);
     const now = new Date();
     const formattedTime = `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+    if(chatContainerRef.current){chatContainerRef.current.scrollTop=chatContainerRef.current.scrollHeight;}
     set(chatRef, {
       name,
       message: msg,
@@ -103,6 +109,14 @@ function App() {
 
     setMsg('');
   };
+  
+  useEffect(() => {
+    // Scroll to the bottom of the chat container on initial load
+    console.log(profilePic)
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, []);
 
   return (
     <div className='Body'>
@@ -113,8 +127,12 @@ function App() {
         </div>
       ) : (
         <div className='master-container'>
+          
           <div className='chat-area'>
-            <h3>User: {name}</h3><button onClick={handleLogout}>LogOut</button>
+          <div className='header'>
+            <img onClick={handleLogout} src={(profilePic)?(profilePic):(randomGuyPic)} alt="PP" className='profilePic'/>
+            <p> {name}</p>
+            </div>
             <div className='chat-container'>
               {chat.map((c) => (
                 <div className={`container${c.name === name ? ' me' : ''}`} key={c.id}>
