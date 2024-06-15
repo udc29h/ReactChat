@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { signOut,getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { getDatabase, onChildAdded, push, ref, set } from 'firebase/database';
 import { initializeApp } from 'firebase/app';
 import './App.css';
 import './Onlinebox.css';
 import Obox from './Onlinebox';
+import { Timestamp } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAsJpBoqKKL7Y0WbRTe1rP5o6Y9UUvZTDg",
@@ -22,25 +23,41 @@ function App() {
   const [name, setName] = useState('');
   const [msg, setMsg] = useState('');
   const [chat, setChat] = useState([]);
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [isSignedIn,setIsSignedIn]=useState(false);
   const [onlineUsers, setOnlineUsers] = useState([]);
+  const [isOnline,setIsOnline]=useState(false);
   const auth = getAuth();
   const provider = new GoogleAuthProvider();
   const db = getDatabase();
   const chatListRef = ref(db, 'chats');
-
+  console.log("fetching the data")
+  const usersListRef=ref(db,'users');
+  const addUserOnline=(user)=>{
+    setOnlineUsers(prevUsers=>[...prevUsers,user.name]);
+  }
   const googleLogin = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
         const user = result.user;
         setIsSignedIn(true);
         setName(user.displayName);
-        setOnlineUsers((users) => [...users, user.displayName]);
+        // setOnlineUsers((users) => [...users, user.displayName]);
       })
       .catch((error) => {
         // Handle errors
       });
   };
+
+  const handleLogout=()=>{
+    signOut(auth)
+    .then(()=>{
+      setIsSignedIn(false);
+      setName('');
+    })
+    .catch((e)=>{
+      console.log(e)
+    })
+  }
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -61,15 +78,27 @@ function App() {
   useEffect(() => {
     onChildAdded(chatListRef, (data) => {
       setChat((chat) => [...chat, data.val()]);
+      console.log(chat);
     });
   }, []);
 
+
+  const sendUsers=()=>{
+    const usersRef=push(usersListRef);
+    set(usersRef,{
+      name,
+      isOnline:isSignedIn ,
+    });
+  }
+
   const sendChat = () => {
     const chatRef = push(chatListRef);
-
+    const now = new Date();
+    const formattedTime = `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
     set(chatRef, {
       name,
       message: msg,
+      time: formattedTime,
     });
 
     setMsg('');
@@ -78,34 +107,42 @@ function App() {
   return (
     <div className='Body'>
       {!isSignedIn ? (
-        <div>
-          <p>Hey, sign in with Google to chat</p>
+        <div className='GoogleLoginPage'>
+          <p>Hey 👋🏻, Sign in with Google to chat ! </p>
           <button onClick={googleLogin}>Google Sign In</button>
         </div>
       ) : (
         <div className='master-container'>
-          <Obox onlineUsers={onlineUsers} />
           <div className='chat-area'>
-            <h3>User: {name}</h3>
+            <h3>User: {name}</h3><button onClick={handleLogout}>LogOut</button>
             <div className='chat-container'>
               {chat.map((c) => (
-                <div className={`container${c.name === name ? ' me' : ''}`}>
-                  <p className='chatbox'>
-                    <strong>{c.name}:</strong>
-                    <br />
+                <div className={`container${c.name === name ? ' me' : ''}`} key={c.id}>
+                <div className="chatbox">
+                  <div className="chat-header">
+                    <span className="chat-name">{c.name}</span>
+                  </div>
+                  <div className="chat-message">
                     <span>{c.message}</span>
-                  </p>
+                  </div>
+                  <div className="chat-time">
+                    <span>{c.time}</span>
+                  </div>
                 </div>
+              </div>
               ))}
               <div id='snap'></div>
               <div className='inputArea'>
                 <input
                   type='text'
                   placeholder='Enter your message!'
-                  onInput={(e) => setMsg(e.target.value)}
+                  onInput={(e) => setMsg(e.target.value)
+          
+                  }
                   value={msg}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
+            
                       sendChat();
                     }
                   }}

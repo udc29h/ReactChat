@@ -1,7 +1,6 @@
 
 
 .Body{
-  background-color: #dadada;
   width: 70vw;
   min-height: 80vh;
   position: absolute;
@@ -9,8 +8,38 @@
   top: 10vh;
   padding:10px;
   border-radius: 4px;
+  background-color:white;
   /* box-shadow: 3px 3px 0px black; */
 }
+.GoogleLoginPage{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(60, 114, 96, 0.437);
+  height:70vh;
+  gap:0em;
+  flex-direction: column;
+  background-image: url('./img/loginimg.jpg');
+  background-size: cover;
+  font-weight: 600;
+  padding-top: 10vh;
+  
+}
+
+.GoogleLoginPage button{
+  background-color: rgba(49, 198, 148, 0.223);
+  border:none;
+  padding: 2vh;
+  border-radius:10px;
+}
+
+.GoogleLoginPage button:hover{
+  scale:150%;
+  transition-duration: 1s;
+  transition-timing-function: cubic-bezier(0.665, 0.84, 0.994, 1);
+}
+
+
 
 .chatbox{
   border: 1px solid rgba(0, 0, 0, 0.53);
@@ -70,7 +99,7 @@
   bottom: 10px;
   display: flex;
   overflow: hidden;
-  background:rgba(255, 255, 255, 0.111) ;
+ 
   backdrop-filter: blur(5px);
 }
 
@@ -81,11 +110,12 @@
   padding: 4px;
   padding-left: 13px;
   height: auto;
+  border-bottom: 2px solid black;
 }
 .inputArea input:focus{
  
     outline: none;
-    background-color: #ffffffb0;
+    background-color: #312e2e43;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 1);
   
 }
@@ -113,7 +143,76 @@
 
 }
 
-@media (max-width: 425px) {
+.chat-area>button{
+  background-color: red;
+  border:none;
+  padding: 0.5rem;
+  border-radius: 2px;
+}
+
+
+.container {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+  width: 40vw;
+}
+
+
+
+.chatbox {
+  max-width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #f1f1f1;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-top: none;
+}
+
+.container.me .chatbox {
+  background-color: #dcf8c6;
+}
+
+.container.me{
+  /* background-color: red; */
+}
+
+.chat-header {
+  margin-bottom: 5px;
+}
+
+.chat-name {
+  font-size: 0.2em;
+  color: #555;
+  position: absolute;
+  top:-10px;
+}
+
+.chat-name {
+  font-size: 0.7em;
+  color: #555;
+  max-width: 100px; /* Set the maximum width for the chat name */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-message {
+  font-size: 1em;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.chat-time {
+  font-size: 0.8em;
+  color: #8888885b;
+  align-self: flex-end;
+}
+
+@media (max-width: 765px) {
   .Body {
     width: 100%;
     right: 0;
@@ -121,18 +220,30 @@
     padding: 0;
   }
 
-  .chatbox {
-    max-width: 100%;
 
-  }
 
   .inputArea {
     width: 100%;
     bottom: 0;
     position: fixed;
   }
-
-  .online-area {
+  .chat-area{
+    width: 100vw;
+    background-color: #333;
+    margin-right: 0;
+    padding-right: 0;
+  }
+  .chat-container{
+    display: flex;
+    flex-direction: column-reverse;
+    width: 90%;
+    margin-top: 2vh;
+    background-color: rgba(255, 0, 0, 0.4);
+  }
+  .container{
+    width: 80vw;
+  }
+  .Onlinebox {
     display: none !important; /* Hide the online-area class in mobile */
   }
 }
