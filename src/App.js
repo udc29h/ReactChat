@@ -130,9 +130,24 @@ function App() {
           
           <div className='chat-area'>
           <div className='header'>
-            <img onClick={handleLogout} src={(profilePic)?(profilePic):(randomGuyPic)} alt="PP" className='profilePic'/>
-            <p> {name}</p>
-            </div>
+            
+            <section class="top-nav">
+              <div>
+              <img onClick={handleLogout} src={(profilePic)?(profilePic):(randomGuyPic)} alt="PP" className='profilePic'/>
+              </div>
+              <input id="menu-toggle" type="checkbox" />
+              <label class='menu-button-container' for="menu-toggle">
+              <div class='menu-button'></div>
+            </label>
+              <ul class="menu">
+                <li onClick={handleLogout}>Logout </li>
+                <li>Three</li>
+                <li>Four</li>
+                <li>Five</li>
+              </ul>
+            </section>
+
+          </div>
             <div className='chat-container'>
               {chat.map((c) => (
                 <div className={`container${c.name === name ? ' me' : ''}`} key={c.id}>

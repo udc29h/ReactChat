@@ -1,11 +1,11 @@
-
+@import url(https://fonts.googleapis.com/css?family=Raleway);
 
 .Body{
   width: 70vw;
-  min-height: 80vh;
+  height: 100vh;
   position: absolute;
   right: 15vw;
-  top: 10vh;
+  /* top: 10vh; */
   padding:10px;
   border-radius: 4px;
   background-color:white;
@@ -41,19 +41,37 @@
 
 
 
-.chatbox{
+/* .chatbox{
   border: 1px solid rgba(0, 0, 0, 0.53);
   border-radius: 5px;
-  padding: 10px;
+  padding: 30px;
   background: rgba(3, 99, 215, 0.571);
   height: auto;
   max-width: 600px;
   display: flex;
   flex-wrap: wrap;
+} */
+
+.chatbox {
+  max-width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #f1f1f1;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-top: none;
+  margin-bottom: 10px; /* Adjust margin as needed */
+
+  /* Ensure messages do not overflow */
+  overflow-wrap: break-word;
 }
+
+
 .container{
   margin: 5px 0;
-  padding: 0;
+  padding: 1vh;
 }
 .container{
   display: flex;
@@ -64,7 +82,7 @@
 
 .chat-container {
   overflow-y: scroll;
-  height: 80%;
+  height: 80vh;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   -ms-scroll-chaining: none;
@@ -75,7 +93,9 @@
 }
 
 .chat-container::-webkit-scrollbar{
-  width: 15px;
+  width: 0px;
+  display: none;
+  background-color: #2fe763;
 }
 
 #snap {
@@ -99,7 +119,6 @@
   bottom: 10px;
   display: flex;
   overflow: hidden;
- 
   backdrop-filter: blur(5px);
 }
 
@@ -109,18 +128,16 @@
   border-radius: 0px;
   padding: 4px;
   padding-left: 13px;
-  height: auto;
+  height: 10vh;
   border-bottom: 2px solid black;
 }
 .inputArea input:focus{
- 
     outline: none;
     background-color: #312e2e43;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 1);
   
 }
 .inputArea button{
- 
   margin-left: 5px;
   border: none;
   background: rgb(6, 5, 5);
@@ -134,7 +151,6 @@
   border-radius: 5px;
   padding: 10px;
   background: rgba(3, 99, 215, 0.571);
-  height: auto;
   margin-bottom: 2px; /* Adjust this value as needed */
 }
 
@@ -201,14 +217,23 @@
 }
 .header{
   display: flex;
-  padding: 2vh;
 }
 .header img{
   height: 6vh;
   border-radius: 32px;
 }
 
-.header img:hover{
+.header img{
+
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transform: filter 0.3s;
+
+  &:hover{
+    filter: brightness(0.5) sepia(1) hue-rotate(180deg);
+    position: relative;
+  }
 }
 
 .chat-message {
@@ -221,6 +246,7 @@
   font-size: 0.8em;
   color: #8888885b;
   align-self: flex-end;
+  margin-top: 5px; /* Adjust margin for correct alignment */
 }
 
 @media (max-width: 765px) {
@@ -246,27 +272,26 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    margin-top: 2vh;
     /* padding-bottom: 15vh; */
-    height: 76vh;
+    height: 83vh;
     background-color: antiquewhite;
+    overflow-y:scroll;
+    overflow-x:hidden;
   }
   .container{
     width:100%;
+    /* background-color: red; */
   }
   .container.me .chatbox{
     margin-right: 10px;
-  }
-  .header{
-    height: 12vh;
   }
 
 }
 
 .header {
   background-color: #333;
-  color: #fff;
-  padding: 10px;
+  color: #e72f2f;
+  /* padding: 10px; */
   text-align: center;
 }
 
@@ -275,12 +300,151 @@
   font-size: 1.5em;
 }
 
+
 @media (max-width: 768px) {
-  .header {
-    padding: 5px;
-  }
 
   .header h1 {
     font-size: 1.2em;
+  }
+}
+
+@import url(https://fonts.googleapis.com/css?family=Raleway);
+h2 {
+  vertical-align: center;
+  text-align: center;
+}
+
+html, body {
+  margin: 0;
+  height: 100%;
+}
+
+* {
+  font-family: "Raleway";
+  box-sizing: border-box;
+}
+
+.top-nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #00BAF0;
+  background: linear-gradient(to left, #f46b45, #eea849);
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  color: #FFF;
+  height: 50px;
+  padding: 1em;
+  width:100%;
+}
+
+.menu {
+  display: flex;
+  flex-direction: row;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menu > li {
+  margin: 0 1rem;
+  overflow: hidden;
+}
+
+.menu-button-container {
+  display: none;
+  height: 100%;
+  width: 30px;
+  cursor: pointer;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#menu-toggle {
+  display: none;
+}
+
+
+.menu-button,
+.menu-button::before,
+.menu-button::after {
+  display: block;
+  background-color: #fff;
+  position: absolute;
+  height: 4px;
+  width: 30px;
+  transition: transform 400ms cubic-bezier(0.23, 1, 0.32, 1);
+  border-radius: 2px;
+}
+
+.menu-button::before {
+  content: "";
+  margin-top: -8px;
+}
+
+.menu-button::after {
+  content: "";
+  margin-top: 8px;
+}
+
+#menu-toggle:checked + .menu-button-container .menu-button::before {
+  margin-top: 0px;
+  transform: rotate(405deg);
+}
+
+#menu-toggle:checked + .menu-button-container .menu-button {
+  background: rgba(255, 255, 255, 0);
+}
+
+#menu-toggle:checked + .menu-button-container .menu-button::after {
+  margin-top: 0px;
+  transform: rotate(-405deg);
+}
+
+@media (max-width: 700px) {
+  .menu-button-container {
+    display: flex;
+  }
+
+  .menu {
+    position: absolute;
+    top: 0;
+    margin-top: 50px;
+    left: 0;
+    flex-direction: column;
+    width: 100vw;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+  }
+
+  #menu-toggle ~ .menu li {
+    height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    transition: height 400ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  #menu-toggle:checked ~ .menu li {
+    border: 1px solid #333;
+    height: 2.5em;
+    padding: 0.5em;
+    transition: height 400ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .menu > li {
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    padding: 0.5em 0;
+    width: 100%;
+    color: white;
+    background-color: #222;
+  }
+
+  .menu > li:not(:last-child) {
+    border-bottom: 1px solid #444;
   }
 }
