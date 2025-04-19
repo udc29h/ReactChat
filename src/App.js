@@ -15,14 +15,14 @@ import randomGuyPic from './img/random.webp';
 
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAsJpBoqKKL7Y0WbRTe1rP5o6Y9UUvZTDg",
-  authDomain: "react-chat-app-506ff.firebaseapp.com",
-  databaseURL: "https://react-chat-app-506ff-default-rtdb.firebaseio.com",
-  projectId: "react-chat-app-506ff",
-  storageBucket: "react-chat-app-506ff.appspot.com",
-  messagingSenderId: "349179677600",
-  appId: "1:349179677600:web:94a0f827990e9804f2f2c5",
-  measurementId: "G-M1GX7MGR36"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
